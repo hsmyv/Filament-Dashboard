@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use function Laravel\Prompts\search;
 
 class StateResource extends Resource
 {
@@ -44,20 +45,24 @@ class StateResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('country_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('country.name')
+                    ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                ->label('State Name')
+                    ->sortable()
+                    ->searchable()
+                    ->hidden(auth()->user()->email == 'admin@kvadrat.az'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->visible(auth()->user()->email == 'admin@kvadrat.az'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('country.name', 'desc')
             ->filters([
                 //
             ])

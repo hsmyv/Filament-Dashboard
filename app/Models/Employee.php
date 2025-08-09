@@ -13,7 +13,7 @@ class Employee extends Model
         'address',
         'zip_code',
         'date_of_birth',
-        'date_of_hired',
+        'date_hired',
         'department_id',
         'city_id',
         'state_id',
