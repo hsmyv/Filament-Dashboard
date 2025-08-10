@@ -11,6 +11,9 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -108,31 +111,28 @@ class EmployeeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('department_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('city_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('state_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('country_id')
-                    ->numeric()
+
+                Tables\Columns\TextColumn::make('country.name')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('first_name')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('last_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('middle_name')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('address')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('zip_code')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('date_hired')
                     ->date()
                     ->sortable(),
@@ -158,6 +158,43 @@ class EmployeeResource extends Resource
                 ]),
             ]);
     }
+                public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make(heading: 'Relationships')
+                ->schema([
+                    TextEntry::make('country.name')
+                    ->label('Country name'),
+                        TextEntry::make('city.name')
+                    ->label('City name'),
+                       TextEntry::make('state.name')
+                    ->label('State name'),
+                       TextEntry::make('department.name')
+                    ->label('Department name'),
+                ])->columns(2),
+
+                Section::make(heading: 'Name')
+                ->schema([
+                    TextEntry::make('first_name')
+                    ->label('Firstname'),
+                       TextEntry::make('middle_name')
+                    ->label('Middlename'),
+                       TextEntry::make('last_name')
+                    ->label('Last name'),
+                ])->columns(3),
+                Section::make(heading: 'Address')
+                ->schema([
+                    TextEntry::make('address')
+                    ->label('Address'),
+                       TextEntry::make('zip_code')
+                    ->label('Zip code'),
+
+                ])->columns(2),
+
+            ]);
+    }
+
 
     public static function getRelations(): array
     {
@@ -171,7 +208,7 @@ class EmployeeResource extends Resource
         return [
             'index' => Pages\ListEmployees::route('/'),
             'create' => Pages\CreateEmployee::route('/create'),
-            'view' => Pages\ViewEmployee::route('/{record}'),
+            // 'view' => Pages\ViewEmployee::route('/{record}'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
         ];
     }
